@@ -1,35 +1,35 @@
-from sqlalchemy import Column, Integer, String, Date
+from sqlalchemy import Column, Integer, String
 from sql_app.database import Base
-from typing import Dict
-from datetime import date
 
 
 class Offer(Base):
     __tablename__ = "offers"
 
     id = Column(Integer, primary_key=True, index=True)
-    job_name = Column(String, index=True)
+    job_name = Column(String)
     company_name = Column(String)
-    website_name = Column(String, index=True)
     place = Column(String)
-    logo_url = Column(String, nullable=True)
+    when_end = Column(String)
+    logo_url = Column(String)
     url = Column(String)
-    found_date = Column(Date, index=True, default=date.today())
+
+    # def __init__(self, job_name: str, place: str, when_end: str, company_name, logo_url: str,url:str):
+    #     self.job_name = job_name
+    #     self.place = place
+    #     self.when_end = when_end
+    #     self.logo_url = logo_url
+    #     self.company_name = company_name
+    #     self.url = url
 
     @staticmethod
-    def offer_to_comparable_dict(elem) -> Dict:
+    def offer_to_dict(elem) -> dict:
         return {
             "job_name": elem.job_name,
             "company_name": elem.company_name,
             "place": elem.place,
+            "when_end": elem.when_end,
             "logo_url": elem.logo_url,
-            "url": elem.url,
-            "website_name": elem.website_name,
+            "url": elem.url
         }
 
 
-class LastScraped(Base):
-    __tablename__ = "last_scraped"
-
-    id = Column(Integer, primary_key=True, index=True)
-    last_scraped = Column(Date)
