@@ -1,14 +1,17 @@
 from fastapi import Depends, FastAPI, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
 from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
-from selenium_driver import scrap_data
-from typing import List
-from fastapi.encoders import jsonable_encoder
+from datetime import date
+from offer_ordering import start_scrap
+from typing import Dict
+from mail import MailSystem
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+mail_system = MailSystem()
 
 
 # Dependency
@@ -20,35 +23,41 @@ def get_db():
         db.close()
 
 
+def get_session_to_start() -> Session:
+    return sessionmaker(bind=engine)()
+
+
+def new_last_scraped_date() -> Dict:
+    return {"last_scraped": date.today()}
+
+
+def start_last_scraped(db: Session = get_session_to_start()):
+    if crud.get_last_scraped_date(db) is None:
+        start_scrap(db)
+        crud.create_last_scraped_date(db, schemas.LastScrapedCreate(**new_last_scraped_date()))
+        mail_system.send_mail_with_new_offers_num("Start server")
+
+
+def update_last_scraped(db: Session):
+    db_date = crud.get_last_scraped_date(db).last_scraped
+    if db_date != date.today():
+        new_offers = start_scrap(db)
+        crud.update_last_scraped_date(db, **new_last_scraped_date())
+        if new_offers != 0: mail_system.send_mail_with_new_offers_num(f"Appeared {new_offers} new offers today")
+
+
+start_last_scraped()
+
+
 @app.get("/")
 async def root():
+    update_last_scraped()
     return {"message": "Hello World"}
-
-
-@app.get("/scrap")
-async def start_scrap(db: Session = Depends(get_db)):
-    scrapped_offers: List[dict] = scrap_data()
-    skip = 0
-    db_offers: List[models.Offer] = []
-    prev_length = 0
-    while True:
-        db_offers += crud.get_offers(db, skip)
-        skip += 100
-        if prev_length == len(db_offers):
-            break
-        else:
-            prev_length = len(db_offers)
-
-    db_offers: List[dict] = [models.Offer.offer_to_dict(offer) for offer in db_offers]
-    new_offers = [ scrap_offer for scrap_offer in scrapped_offers if scrap_offer not in db_offers]
-
-    for offer in new_offers:
-        crud.create_offer(db, schemas.OfferCreate(**offer))
-    return new_offers
 
 
 @app.get("/offers/{offer_id}")
 def read_offer(offer_id: int, db: Session = Depends(get_db)):
+    update_last_scraped(db)
     db_offer = crud.get_offer(db, offer_id=offer_id)
     if db_offer is None:
         raise HTTPException(status_code=404, detail="This offer doesn't exist")
@@ -57,4 +66,5 @@ def read_offer(offer_id: int, db: Session = Depends(get_db)):
 
 @app.get("/offers")
 def read_offers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    update_last_scraped(db)
     return crud.get_offers(db, skip=skip, limit=limit)
