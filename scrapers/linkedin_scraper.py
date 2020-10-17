@@ -29,12 +29,14 @@ class LinkedInScraper(OffersScraper):
     def is_next_page_set(self) -> bool:
         li_elements = self.driver.find_elements_by_css_selector(self.next_page_class)
 
-        return False
-
         old_height = -1
         new_height = 0
-        while self.driver.execute_script("return document.readyState") is not 'complete':
-            pass
+        if self.driver.execute_script("return document.readyState") is not 'complete':
+            sleep(10)
+        if self.driver.execute_script("return document.readyState") is not 'complete':
+            print("Problems with loading page")
+            return False
+
         while new_height != old_height:
             old_height = new_height
             new_height = self.driver.execute_script(

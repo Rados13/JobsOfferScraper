@@ -41,7 +41,7 @@ class OffersScraper(metaclass=abc.ABCMeta):
             offers_links += self.get_offers_from_this_page()
             is_end = self.is_next_page_set()
 
-        return [self.get_offer_data(link) for link in offers_links]
+        return [self.get_offer_data(link) for link in offers_links if link is not None]
 
     def get_offers_from_this_page(self) -> Vector:
         a_elements = self.driver.find_elements_by_css_selector(self.offers_a_class)

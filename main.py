@@ -59,6 +59,7 @@ async def root(db: Session = Depends(get_db)):
 @app.get("/scrap")
 async def scrap_offers():
     for website in WebsiteName:
+        print(f"Which website: {website}")
         print(scrap(website))
 
 
