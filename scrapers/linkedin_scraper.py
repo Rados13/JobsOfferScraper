@@ -31,10 +31,15 @@ class LinkedInScraper(OffersScraper):
 
         old_height = -1
         new_height = 0
+        while self.driver.execute_script("return document.readyState"):
+            pass
         while new_height != old_height:
             old_height = new_height
             new_height = self.driver.execute_script(
-                "window.scrollTo(0, document.body.scrollHeight); return document.body.scrollHeight;")
+                """
+                    window.scrollTo(0, document.body.scrollHeight); 
+                    return document.body.scrollHeight;
+                """)
             sleep(2)
 
         is_end = False
