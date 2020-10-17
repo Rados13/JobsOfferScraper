@@ -31,11 +31,6 @@ class LinkedInScraper(OffersScraper):
 
         old_height = -1
         new_height = 0
-        if self.driver.execute_script("return document.readyState") is not 'complete':
-            sleep(10)
-        if self.driver.execute_script("return document.readyState") is not 'complete':
-            print("Problems with loading page")
-            return False
 
         while new_height != old_height:
             old_height = new_height
