@@ -55,6 +55,10 @@ async def root(db: Session = Depends(get_db)):
     update_last_scraped(db)
     return {"message": "Hello World"}
 
+@app.get("/scrap")
+async def scrap():
+    for website in WebsiteName:
+        print(scrap(website))
 
 @app.get("/offers/{offer_id}")
 def read_offer(offer_id: int, db: Session = Depends(get_db)):
