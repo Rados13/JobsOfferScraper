@@ -6,6 +6,7 @@ from datetime import date
 from offer_ordering import start_scrap
 from typing import Dict
 from mail import MailSystem
+from sql_app.website_names import WebsiteName
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -50,8 +51,8 @@ start_last_scraped()
 
 
 @app.get("/")
-async def root():
-    update_last_scraped()
+async def root(db: Session = Depends(get_db)):
+    update_last_scraped(db)
     return {"message": "Hello World"}
 
 
@@ -68,3 +69,13 @@ def read_offer(offer_id: int, db: Session = Depends(get_db)):
 def read_offers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     update_last_scraped(db)
     return crud.get_offers(db, skip=skip, limit=limit)
+
+
+@app.get("/offers/{website}")
+def read_offers_by_website(website: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    update_last_scraped(db)
+    for website_enum in WebsiteName:
+        if website_enum.value == website:
+            return crud.get_offers_by_website_name(db, website_enum, skip=skip, limit=limit)
+
+    raise HTTPException(status_code=404, detail="This website_name doesn't exist")

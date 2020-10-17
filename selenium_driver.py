@@ -5,26 +5,23 @@ from scrapers.linkedin_scraper import LinkedInScraper
 from scrapers.nofluffjobs_scraper import NoFluffJobsScrapper
 from typing import List, Dict
 from sql_app.website_names import WebsiteName
+import os
 
-"""
-Setup for heroku
+# Setup for heroku
 chrome_options = webdriver.ChromeOptions()
 chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument("--no-sandbox")
 driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-"""
 
 """
 Setup for local
-"""
 
-# driver.get("https://www.pracuj.pl/praca/krakow;wp?rd=30&cc=5013005%2c5015%2c5016&et=1%2c17%2c18")
-# result = PracujScraper(driver).get_offers()
-# print(len(result))
-
+driver.get("https://www.pracuj.pl/praca/krakow;wp?rd=30&cc=5013005%2c5015%2c5016&et=1%2c17%2c18")
+result = PracujScraper(driver).get_offers()
 driver = webdriver.Chrome(ChromeDriverManager().install())
+"""
 
 
 def scrap(website_name: WebsiteName) -> List[Dict]:
