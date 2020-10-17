@@ -36,7 +36,7 @@ def start_last_scraped(db: Session = get_session_to_start()):
     if crud.get_last_scraped_date(db) is None:
         start_scrap(db)
         crud.create_last_scraped_date(db, schemas.LastScrapedCreate(**new_last_scraped_date()))
-        mail_system.send_mail_with_new_offers_num("Start server")
+        print("Start server")
 
 
 def update_last_scraped(db: Session):

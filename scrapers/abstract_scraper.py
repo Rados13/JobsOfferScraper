@@ -48,6 +48,7 @@ class OffersScraper(metaclass=abc.ABCMeta):
         return [element.get_attribute("href") for element in a_elements]
 
     def get_offer_data(self, link: str) -> Dict:
+        print(f"{self.website_name.value}  {link}")
         self.driver.get(link)
         offer_dict = {key: self.get_text_from_class(value) for key, value in self.text_classes.items()}
         offer_dict['place'] = offer_dict['place'].replace("\n", ",")
