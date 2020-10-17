@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
 from datetime import date
-from offer_ordering import start_scrap
+from offer_ordering import start_scrap, scrap
 from typing import Dict
 from mail import MailSystem
 from sql_app.website_names import WebsiteName
@@ -55,10 +55,12 @@ async def root(db: Session = Depends(get_db)):
     update_last_scraped(db)
     return {"message": "Hello World"}
 
+
 @app.get("/scrap")
-async def scrap():
+async def scrap_offers():
     for website in WebsiteName:
         print(scrap(website))
+
 
 @app.get("/offers/{offer_id}")
 def read_offer(offer_id: int, db: Session = Depends(get_db)):
