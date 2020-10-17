@@ -22,6 +22,7 @@ Jinja2==2.11.2
 MarkupSafe==1.1.1
 orjson==3.4.0
 promise==2.3
+psycopg2==2.8.6
 pydantic==1.6.1
 python-multipart==0.0.5
 PyYAML==5.3.1
