@@ -7,7 +7,7 @@ from typing import List, Dict
 from sql_app.website_names import WebsiteName
 import os
 
-"""
+# """
 # Setup for heroku
 chrome_options = webdriver.ChromeOptions()
 chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
@@ -15,17 +15,16 @@ chrome_options.add_argument("--headless")
 chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument("--no-sandbox")
 driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-"""
-
 # """
-# Setup for local
 
+"""
+# Setup for local
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument("--no-sandbox")
 driver = webdriver.Chrome(ChromeDriverManager().install(),chrome_options=chrome_options)
-# """
+"""
 
 
 def scrap(website_name: WebsiteName) -> List[Dict]:
@@ -55,3 +54,4 @@ def scrap_nofluff_jobs() -> List[Dict]:
     return NoFluffJobsScrapper(driver).get_offers()
 
 
+scrap_nofluff_jobs()
