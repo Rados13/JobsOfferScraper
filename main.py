@@ -56,11 +56,18 @@ async def root(db: Session = Depends(get_db)):
     return {"message": "Hello World"}
 
 
-@app.get("/scrap")
+@app.get("/scrap/pracuj")
 async def scrap_offers():
-    for website in WebsiteName:
-        print(f"Which website: {website}")
-        print(scrap(website))
+    return scrap(WebsiteName.PRACUJ)
+
+
+@app.get("/scrap/linked")
+async def scrap_offers():
+    return scrap(WebsiteName.LINKEDIN)
+
+@app.get("/scrap/nofluff")
+async def scrap_offers():
+    return scrap(WebsiteName.NO_FLUFF_JOBS)
 
 
 @app.get("/offers/{offer_id}")
