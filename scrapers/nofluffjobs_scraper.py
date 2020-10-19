@@ -32,5 +32,3 @@ class NoFluffJobsScrapper(OffersScraper):
     def get_page_num(self, url: str) -> (str, int):
         link, num, *rest = url.split("page=")
         return link, int(num)
-
-

@@ -1,7 +1,7 @@
 import abc
 from typing import List, Dict
 from selenium import webdriver
-
+from time import sleep
 Vector = List[str]
 
 
@@ -34,6 +34,7 @@ class OffersScraper(metaclass=abc.ABCMeta):
         """
 
     def get_offers(self) -> List[Dict]:
+        sleep(5)
         offers_links: list = self.get_offers_from_this_page()
 
         is_end = self.is_next_page_set()
@@ -41,14 +42,13 @@ class OffersScraper(metaclass=abc.ABCMeta):
             offers_links += self.get_offers_from_this_page()
             is_end = self.is_next_page_set()
 
-        return [self.get_offer_data(link) for link in offers_links if link is not None]
+        return [self.get_offer_data(link) for link in offers_links]
 
     def get_offers_from_this_page(self) -> Vector:
         a_elements = self.driver.find_elements_by_css_selector(self.offers_a_class)
         return [element.get_attribute("href") for element in a_elements]
 
     def get_offer_data(self, link: str) -> Dict:
-        print(f"{self.website_name.value}  {link}")
         self.driver.get(link)
         offer_dict = {key: self.get_text_from_class(value) for key, value in self.text_classes.items()}
         offer_dict['place'] = offer_dict['place'].replace("\n", ",")
