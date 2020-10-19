@@ -39,7 +39,7 @@ def start_last_scraped(db: Session = get_session_to_start()):
         print("Start server")
 
 
-def update_last_scraped(db: Session, scrap_again: bool):
+def update_last_scraped(db: Session, scrap_again: bool = False):
     db_date = crud.get_last_scraped_date(db).last_scraped
     if db_date != date.today() or scrap_again:
         new_offers = start_scrap(db)
@@ -54,21 +54,6 @@ start_last_scraped()
 async def root(db: Session = Depends(get_db), scrap_again: bool = False):
     update_last_scraped(db, scrap_again)
     return {"message": "Hello World"}
-
-
-@app.get("/scrap/pracuj")
-async def scrap_offers():
-    return scrap(WebsiteName.PRACUJ)
-
-
-@app.get("/scrap/linked")
-async def scrap_offers():
-    return scrap(WebsiteName.LINKEDIN)
-
-
-@app.get("/scrap/nofluff")
-async def scrap_offers():
-    return scrap(WebsiteName.NO_FLUFF_JOBS)
 
 
 @app.get("/offers/{offer_id}")
