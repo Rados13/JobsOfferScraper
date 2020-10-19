@@ -86,6 +86,9 @@ def read_offers_by_website(website: str, skip: int = 0, limit: int = 100, db: Se
 
     raise HTTPException(status_code=404, detail="This website_name doesn't exist")
 
+@app.get("/scrap/linkedin")
+async def scrap_linkedin():
+    return scrap(WebsiteName.LINKEDIN)
 
 @app.get("/scrap/{scrap_again}")
 async def try_scrap(db: Session = Depends(get_db), scrap_again: bool = False):
@@ -93,6 +96,4 @@ async def try_scrap(db: Session = Depends(get_db), scrap_again: bool = False):
     return {"message": "Hello World"}
 
 
-@app.get("/scrap/linkedin")
-async def scrap_linkedin():
-    return scrap(WebsiteName.LINKEDIN)
+
