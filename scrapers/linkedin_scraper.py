@@ -18,6 +18,7 @@ class LinkedInScraper(OffersScraper):
         self.next_page_class = ".infinite-scroller__show-more-button"
 
     def get_offers(self) -> List[Dict]:
+        self.wait_for_load_page()
         is_end = self.is_next_page_set()
         offers_links: list = self.get_offers_from_this_page()
         while is_end:

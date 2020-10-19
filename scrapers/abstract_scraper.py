@@ -34,8 +34,11 @@ class OffersScraper(metaclass=abc.ABCMeta):
             next_page_class = ""
         """
 
-    def get_offers(self) -> List[Dict]:
+    def wait_for_load_page(self):
         sleep(5)
+
+    def get_offers(self) -> List[Dict]:
+        self.wait_for_load_page()
         offers_links: list = self.get_offers_from_this_page()
 
         is_end = self.is_next_page_set()
