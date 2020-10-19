@@ -43,7 +43,7 @@ def update_last_scraped(db: Session):
     db_date = crud.get_last_scraped_date(db).last_scraped
     if db_date != date.today():
         new_offers = start_scrap(db)
-        crud.update_last_scraped_date(db, schemas.LastScrapedCreate(**new_last_scraped_date()))
+        crud.update_last_scraped_date(db, new_last_scraped_date())
         if new_offers != 0: mail_system.send_mail_with_new_offers_num(f"Appeared {new_offers} new offers today")
 
 
