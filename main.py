@@ -45,6 +45,7 @@ def update_last_scraped(db: Session, scrap_again: bool = False):
     if db_date != date.today() or scrap_again:
         thread = Thread(target=new_thread_check_updates, args=(db,))
         thread.start()
+        print("End update")
 
 
 def new_thread_check_updates(db: Session):
@@ -87,6 +88,11 @@ def read_offers_by_website(website: str, skip: int = 0, limit: int = 100, db: Se
 
 
 @app.get("/scrap/{scrap_again}")
-async def root(db: Session = Depends(get_db), scrap_again: bool = False):
+async def try_scrap(db: Session = Depends(get_db), scrap_again: bool = False):
     update_last_scraped(db, scrap_again)
     return {"message": "Hello World"}
+
+
+@app.get("/scrap/linkedin")
+async def scrap_linkedin():
+    return scrap(WebsiteName.LINKEDIN)
