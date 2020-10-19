@@ -42,7 +42,7 @@ def get_last_scraped_date(db: Session):
 
 
 def update_last_scraped_date(db: Session, new_scraped: Dict):
-    db.query(models.LastScraped).first().update(new_scraped, synchronize_session=False)
+    db.query(models.LastScraped).update(new_scraped, synchronize_session=False)
     db.commit()
 
 
