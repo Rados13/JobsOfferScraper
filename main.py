@@ -39,9 +39,9 @@ def start_last_scraped(db: Session = get_session_to_start()):
         print("Start server")
 
 
-def update_last_scraped(db: Session):
+def update_last_scraped(db: Session, scrap_again: bool):
     db_date = crud.get_last_scraped_date(db).last_scraped
-    if db_date != date.today():
+    if db_date != date.today() or scrap_again:
         new_offers = start_scrap(db)
         crud.update_last_scraped_date(db, new_last_scraped_date())
         if new_offers != 0: mail_system.send_mail_with_new_offers_num(f"Appeared {new_offers} new offers today")
@@ -50,9 +50,9 @@ def update_last_scraped(db: Session):
 start_last_scraped()
 
 
-@app.get("/")
-async def root(db: Session = Depends(get_db)):
-    update_last_scraped(db)
+@app.get("/{scrap_again}")
+async def root(db: Session = Depends(get_db), scrap_again: bool = False):
+    update_last_scraped(db, scrap_again)
     return {"message": "Hello World"}
 
 
@@ -64,6 +64,7 @@ async def scrap_offers():
 @app.get("/scrap/linked")
 async def scrap_offers():
     return scrap(WebsiteName.LINKEDIN)
+
 
 @app.get("/scrap/nofluff")
 async def scrap_offers():
