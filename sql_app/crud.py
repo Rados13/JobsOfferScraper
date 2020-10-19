@@ -41,7 +41,7 @@ def get_last_scraped_date(db: Session):
     return db.query(models.LastScraped).first()
 
 
-def update_last_scraped_date(db: Session, new_scraped: Dict):
+def update_last_scraped_date(db: Session, new_scraped: schemas.LastScrapedCreate):
     db.query(models.LastScraped).first().update(new_scraped, synchronize_session=False)
     db.commit()
 

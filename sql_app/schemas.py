@@ -22,11 +22,14 @@ class Offer(OfferBase):
     class Config:
         orm_model = True
 
+
 class LastScrapedBase(BaseModel):
     last_scraped: date
 
+
 class LastScrapedCreate(LastScrapedBase):
     pass
+
 
 class LastScraped(LastScrapedBase):
     id: int
