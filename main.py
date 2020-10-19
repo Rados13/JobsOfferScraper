@@ -7,6 +7,7 @@ from offer_ordering import start_scrap, scrap
 from typing import Dict
 from mail import MailSystem
 from sql_app.website_names import WebsiteName
+from threading import Thread
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -42,17 +43,21 @@ def start_last_scraped(db: Session = get_session_to_start()):
 def update_last_scraped(db: Session, scrap_again: bool = False):
     db_date = crud.get_last_scraped_date(db).last_scraped
     if db_date != date.today() or scrap_again:
-        new_offers = start_scrap(db)
-        crud.update_last_scraped_date(db, new_last_scraped_date())
-        if new_offers != 0: mail_system.send_mail_with_new_offers_num(f"Appeared {new_offers} new offers today")
+        thread = Thread(target=new_thread_check_updates, args=(db,))
+        thread.start()
+
+
+def new_thread_check_updates(db: Session):
+    new_offers = start_scrap(db)
+    crud.update_last_scraped_date(db, new_last_scraped_date())
+    if new_offers != 0: mail_system.send_mail_with_new_offers_num(f"Appeared {new_offers} new offers today")
 
 
 start_last_scraped()
 
 
-@app.get("/{scrap_again}")
-async def root(db: Session = Depends(get_db), scrap_again: bool = False):
-    update_last_scraped(db, scrap_again)
+@app.get("/")
+async def root(db: Session = Depends(get_db)):
     return {"message": "Hello World"}
 
 
@@ -79,3 +84,9 @@ def read_offers_by_website(website: str, skip: int = 0, limit: int = 100, db: Se
             return crud.get_offers_by_website_name(db, website_enum, skip=skip, limit=limit)
 
     raise HTTPException(status_code=404, detail="This website_name doesn't exist")
+
+
+@app.get("/scrap/{scrap_again}")
+async def root(db: Session = Depends(get_db), scrap_again: bool = False):
+    update_last_scraped(db, scrap_again)
+    return {"message": "Hello World"}
