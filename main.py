@@ -92,6 +92,11 @@ async def scrap_linkedin():
     return scrap(WebsiteName.LINKEDIN)
 
 
+@app.get("/scrap/nofluff")
+async def scrap_nofluff():
+    return scrap(WebsiteName.NO_FLUFF_JOBS)
+
+
 @app.get("/scrap/{scrap_again}")
 async def try_scrap(db: Session = Depends(get_db), scrap_again: bool = False):
     update_last_scraped(db, scrap_again)
