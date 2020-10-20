@@ -35,7 +35,7 @@ class OffersScraper(metaclass=abc.ABCMeta):
         """
 
     def wait_for_load_page(self):
-        sleep(5)
+        sleep(10)
 
     def get_offers(self) -> List[Dict]:
         self.wait_for_load_page()
@@ -50,6 +50,7 @@ class OffersScraper(metaclass=abc.ABCMeta):
 
     def get_offers_from_this_page(self) -> Vector:
         a_elements = self.driver.find_elements_by_css_selector(self.offers_a_class)
+        print(len(a_elements))
         return [element.get_attribute("href") for element in a_elements]
 
     def get_offer_data(self, link: str) -> Dict:

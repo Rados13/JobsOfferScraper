@@ -25,8 +25,6 @@ class LinkedInScraper(OffersScraper):
             offers_links += self.get_offers_from_this_page()[len(offers_links):]
             is_end = self.is_next_page_set()
 
-        print(offers_links)
-
         return [self.get_offer_data(link) for link in offers_links]
 
     def is_next_page_set(self) -> bool:
