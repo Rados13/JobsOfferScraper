@@ -19,19 +19,14 @@ class LinkedInScraper(OffersScraper):
 
     def get_offers(self) -> List[Dict]:
         print(f"Link now: {self.driver.current_url}")
-        print(f"Before wait: {self.get_offers_from_this_page()}")
         self.wait_for_load_page()
-        is_end = self.is_next_page_set()
+        is_not_end = self.is_next_page_set()
         offers_links: list = self.get_offers_from_this_page()
-        print(f"Links before while {len(offers_links)}")
-        while is_end:
+        while is_not_end:
             offers_links += self.get_offers_from_this_page()[len(offers_links):]
-            is_end = self.is_next_page_set()
+            is_not_end = self.is_next_page_set()
 
-        print(f" amount of link {len(offers_links)}")
-        offers = [self.get_offer_data(link) for link in offers_links]
-        print(f"Offers amount: {len(offers)}")
-        return offers
+        return [self.get_offer_data(link) for link in offers_links]
 
     def is_next_page_set(self) -> bool:
         li_elements = self.driver.find_elements_by_css_selector(self.next_page_class)

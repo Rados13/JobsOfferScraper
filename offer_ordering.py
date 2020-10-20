@@ -15,6 +15,7 @@ def start_scrap(db: Session) -> int:
             for offer in new_offers:
                 crud.create_offer(db, schemas.OfferCreate(**offer))
             new_offers_amount += len(new_offers)
+
         if expired_offers is not None:
             for offer in expired_offers:
                 crud.delete_offer(db, offer.id)
