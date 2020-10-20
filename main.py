@@ -62,7 +62,17 @@ async def root(db: Session = Depends(get_db)):
     return {"message": "Hello World"}
 
 
-@app.get("/offers/{offer_id}")
+@app.get("/offers/{website}")
+def read_offers_by_website(website: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    update_last_scraped(db)
+    for website_enum in WebsiteName:
+        if website_enum.value == website:
+            return crud.get_offers_by_website_name(db, website_enum, skip=skip, limit=limit)
+
+    raise HTTPException(status_code=404, detail="This website_name doesn't exist")
+
+
+@app.get("/offers/offer/{offer_id}")
 def read_offer(offer_id: int, db: Session = Depends(get_db)):
     update_last_scraped(db)
     db_offer = crud.get_offer(db, offer_id=offer_id)
@@ -75,16 +85,6 @@ def read_offer(offer_id: int, db: Session = Depends(get_db)):
 def read_offers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     update_last_scraped(db)
     return crud.get_offers(db, skip=skip, limit=limit)
-
-
-@app.get("/offers/{website}")
-def read_offers_by_website(website: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    update_last_scraped(db)
-    for website_enum in WebsiteName:
-        if website_enum.value == website:
-            return crud.get_offers_by_website_name(db, website_enum, skip=skip, limit=limit)
-
-    raise HTTPException(status_code=404, detail="This website_name doesn't exist")
 
 
 """
