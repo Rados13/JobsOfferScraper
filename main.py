@@ -89,12 +89,16 @@ def read_offers_by_website(website: str, skip: int = 0, limit: int = 100, db: Se
 
 @app.get("/scrap/linkedin")
 async def scrap_linkedin():
-    return scrap(WebsiteName.LINKEDIN)
+    thread = Thread(target=scrap, args=(WebsiteName.LINKEDIN,))
+    thread.start()
+    return {"work": "Start scrap linkedin"}
 
 
 @app.get("/scrap/nofluff")
 async def scrap_nofluff():
-    return scrap(WebsiteName.NO_FLUFF_JOBS)
+    thread = Thread(target=scrap, args=(WebsiteName.NO_FLUFF_JOBS,))
+    thread.start()
+    return {"work": "Start scrap nofluff"}
 
 
 @app.get("/scrap/{scrap_again}")
