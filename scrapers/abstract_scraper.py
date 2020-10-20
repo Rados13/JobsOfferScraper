@@ -50,7 +50,6 @@ class OffersScraper(metaclass=abc.ABCMeta):
 
     def get_offers_from_this_page(self) -> Vector:
         a_elements = self.driver.find_elements_by_css_selector(self.offers_a_class)
-        print(len(a_elements))
         return [element.get_attribute("href") for element in a_elements]
 
     def get_offer_data(self, link: str) -> Dict:
