@@ -18,6 +18,8 @@ class LinkedInScraper(OffersScraper):
         self.next_page_class = ".infinite-scroller__show-more-button"
 
     def get_offers(self) -> List[Dict]:
+        print(f"Link now: {self.driver.current_url}")
+        print(f"Before wait: {self.get_offers_from_this_page()}")
         self.wait_for_load_page()
         is_end = self.is_next_page_set()
         offers_links: list = self.get_offers_from_this_page()
