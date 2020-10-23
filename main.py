@@ -35,14 +35,16 @@ def new_last_scraped_date() -> Dict:
 
 def start_last_scraped(db: Session = get_session_to_start()):
     if crud.get_last_scraped_date(db) is None:
-        start_scrap(db)
         crud.create_last_scraped_date(db, schemas.LastScrapedCreate(**new_last_scraped_date()))
+        thread = Thread(target=new_thread_check_updates, args=(db,))
+        thread.start()
         print("Start server")
 
 
 def update_last_scraped(db: Session, scrap_again: bool = False):
     db_date = crud.get_last_scraped_date(db).last_scraped
     if db_date != date.today() or scrap_again:
+        crud.update_last_scraped_date(db, new_last_scraped_date())
         thread = Thread(target=new_thread_check_updates, args=(db,))
         thread.start()
         print("End update")
@@ -50,7 +52,6 @@ def update_last_scraped(db: Session, scrap_again: bool = False):
 
 def new_thread_check_updates(db: Session):
     new_offers = start_scrap(db)
-    crud.update_last_scraped_date(db, new_last_scraped_date())
     if new_offers != 0: mail_system.send_mail_with_new_offers_num(f"Appeared {new_offers} new offers today")
 
 
