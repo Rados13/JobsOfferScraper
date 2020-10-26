@@ -10,7 +10,9 @@ def start_scrap(db: Session) -> int:
     new_offers_amount = 0
     for website in WebsiteName:
         scrapped_offers: List[Dict] = scrap(website)
+        print(f"Website {website} get {len(scrapped_offers)} offers")
         new_offers, expired_offers = get_new_and_expired_offers(db, website, scrapped_offers)
+
         if new_offers is not None:
             for offer in new_offers:
                 crud.create_offer(db, schemas.OfferCreate(**offer))
