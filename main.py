@@ -43,14 +43,16 @@ def start_last_scraped(db: Session = get_session_to_start(), scrap_again: bool =
         db_date = db_date.last_scraped
 
     if must_scrap or scrap_again or db_date != date.today():
+        crud.update_last_scraped_date(db, new_last_scraped_date())
         thread = Thread(target=new_thread_check_updates, args=(db,))
         thread.start()
-        print("Start scrap")
 
 
 def new_thread_check_updates(db: Session):
+    print("Start scrap")
     new_offers = start_scrap(db)
     if new_offers != 0: mail_system.send_mail_with_new_offers_num(f"Appeared {new_offers} new offers today")
+    print("End scrap")
 
 
 start_last_scraped()
